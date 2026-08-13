@@ -104,10 +104,6 @@ app.get("/api/admin/users", async (req, res) => {
     res.json(q.rows);
   } catch { res.status(500).json({ error: "Server error." }); }
 });
-app.get("/", (req, res) => {
-  res.send("HR Markets is running successfully 🚀");
-});app.get("/", (req, res) => {
-  res.send("HR Markets is running successfully 🚀");
 });app.get("/", (req, res) => {
   res.send("HR Markets is running successfully 🚀");
 });
