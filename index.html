@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR Markets — Demo Broker</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#07101f;color:#eef4ff}
+header{padding:18px 6%;border-bottom:1px solid #22304a;display:flex;justify-content:space-between}
+.brand{font-size:24px;font-weight:800}.brand span{color:#6ee7b7}
+main{max-width:1000px;margin:35px auto;padding:0 20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:#101a2d;border:1px solid #263650;border-radius:14px;padding:22px}
+input,select,button{width:100%;box-sizing:border-box;padding:12px;margin:7px 0;border-radius:8px;border:1px solid #33425e;background:#0a1324;color:white}
+button{cursor:pointer;background:#6ee7b7;color:#062015;font-weight:700;border:0}
+.muted{color:#9fb0c8}.stat{font-size:30px;font-weight:800}
+pre{white-space:pre-wrap;word-break:break-word}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="brand">HR <span>Markets</span></div><div class="muted">Demo Environment</div></header>
+<main>
+<h1>HR Markets Demo</h1>
+<p class="muted">Demo trading only. No real-money deposits, withdrawals, or live execution are enabled.</p>
+<div class="grid">
+<section class="card">
+<h2>Create account</h2>
+<input id="rname" placeholder="Full name"><input id="remail" placeholder="Email">
+<input id="rpass" type="password" placeholder="Password (8+ characters)">
+<button onclick="register()">Create Demo Account</button>
+</section>
+<section class="card">
+<h2>Login</h2>
+<input id="lemail" placeholder="Email"><input id="lpass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</section>
+</div>
+<section class="card" style="margin-top:20px">
+<h2>Demo account</h2><div id="account" class="muted">Create or log in to a demo account.</div>
+</section>
+<section class="card" style="margin-top:20px">
+<h2>Place demo trade</h2>
+<div class="grid">
+<div><input id="symbol" value="XAUUSD"><select id="side"><option>BUY</option><option>SELL</option></select></div>
+<div><input id="volume" type="number" step="0.01" value="0.01"><input id="price" type="number" step="0.01" value="3000"></div>
+</div>
+<button onclick="trade()">Place Demo Trade</button>
+<pre id="result"></pre>
+</section>
+</main>
+<script>
+let user=null;
+const out=(x)=>document.getElementById("result").textContent=JSON.stringify(x,null,2);
+async function api(url,opt={}){const r=await fetch(url,{headers:{"Content-Type":"application/json"},...opt});const j=await r.json();if(!r.ok)throw new Error(j.error||"Request failed");return j}
+async function register(){try{user=await api("/api/register",{method:"POST",body:JSON.stringify({name:rname.value,email:remail.value,password:rpass.value})});show()}catch(e){out({error:e.message})}}
+async function login(){try{user=await api("/api/login",{method:"POST",body:JSON.stringify({email:lemail.value,password:lpass.value})});show()}catch(e){out({error:e.message})}}
+function show(){account.innerHTML=`<div class="stat">$${Number(user.demo_balance).toFixed(2)}</div><p>${user.name} · ${user.email}</p><p>KYC: ${user.kyc_status} · Account #${user.id}</p>`}
+async function trade(){if(!user)return out({error:"Login first"});try{out(await api("/api/demo-trades",{method:"POST",body:JSON.stringify({user_id:user.id,symbol:symbol.value,side:side.value,volume:Number(volume.value),open_price:Number(price.value)})}))}catch(e){out({error:e.message})}}
+</script>
+</body></html>
