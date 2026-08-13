@@ -1,4 +1,5 @@
-const express = require("express");
+const crypto = require("crypto");
+const path = require("path");
 const helmet = require("helmet");
 const { Pool } = require("pg");
 const crypto = require("crypto");
@@ -105,6 +106,6 @@ app.get("/api/admin/users", async (req, res) => {
   } catch { res.status(500).json({ error: "Server error." }); }
 });
 app.get("/", (req, res) => {
-  res.send("HR Markets is running successfully 🚀");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 app.listen(port, () => console.log(`HR Markets listening on ${port}`));
