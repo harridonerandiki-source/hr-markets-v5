@@ -106,5 +106,9 @@ app.get("/api/admin/users", async (req, res) => {
 });
 app.get("/", (req, res) => {
   res.send("HR Markets is running successfully 🚀");
+});app.get("/", (req, res) => {
+  res.send("HR Markets is running successfully 🚀");
+});app.get("/", (req, res) => {
+  res.send("HR Markets is running successfully 🚀");
 });
 app.listen(port, () => console.log(`HR Markets listening on ${port}`));
